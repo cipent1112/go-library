@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	_ "go-library/api/author/gateway/route"
+	_ "go-library/api/category/gateway/route"
 )
 
 func main() {
