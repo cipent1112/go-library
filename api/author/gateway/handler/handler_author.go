@@ -15,6 +15,8 @@ type AuthorContract interface {
 	Get(ctx *gin.Context)
 	GetList(ctx *gin.Context)
 	Store(ctx *gin.Context)
+	Update(ctx *gin.Context)
+	Delete(ctx *gin.Context)
 }
 
 func (h *Handler) Get(ctx *gin.Context) {
@@ -83,5 +85,50 @@ func (h *Handler) Store(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, presenter.Default{
 		Message: fmt.Sprintf("%s %s", presenter.RESPONSE_SUCCESS_CREATE, h.Name),
+	})
+}
+
+func (h *Handler) Update(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	param := entity.Author{}
+	if err := ctx.Bind(&param); err != nil {
+		ctx.JSON(http.StatusBadRequest, presenter.Default{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	v := validate.New()
+	if err := v.Struct(param); err != nil {
+		ctx.JSON(http.StatusBadRequest, presenter.Default{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	if err := h.Usecase.Update(id, param); err != nil {
+		ctx.JSON(http.StatusInternalServerError, presenter.Default{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, presenter.Default{
+		Message: fmt.Sprintf("%s %s", presenter.RESPONSE_SUCCESS_UPDATE, h.Name),
+	})
+}
+
+func (h *Handler) Delete(ctx *gin.Context) {
+	id := ctx.Param("id")
+	if err := h.Usecase.Delete(id); err != nil {
+		ctx.JSON(http.StatusInternalServerError, presenter.Default{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, presenter.Default{
+		Message: fmt.Sprintf("%s %s", presenter.RESPONSE_SUCCESS_DELETE, h.Name),
 	})
 }

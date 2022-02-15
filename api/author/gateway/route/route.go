@@ -20,10 +20,19 @@ type service struct {
 }
 
 func (svc *service) Endpoints(e *gin.Engine) {
-	e.Group("/author").
-		GET("/", svc.Handler.GetList).
-		GET("/:id", svc.Handler.Get).
-		POST("/", svc.Handler.Store)
+	//e.Group("/author").
+	//	GET("/", svc.Handler.GetList).
+	//	GET("/:id", svc.Handler.Get).
+	//	POST("/", svc.Handler.Store).
+	//	PUT("/:id", svc.Handler.Update).
+	//	DELETE("/:id", svc.Handler.Delete)
+
+	a := e.Group("/author")
+	a.GET("/", svc.Handler.GetList)
+	a.GET("/:id", svc.Handler.Get)
+	a.POST("/", svc.Handler.Store)
+	a.PUT("/:id", svc.Handler.Update)
+	a.DELETE("/:id", svc.Handler.Delete)
 }
 
 func New() registry.RouteContract {
